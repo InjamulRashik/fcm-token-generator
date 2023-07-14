@@ -1,25 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect } from "react";
+import React from "react";
+import { messaging } from "./firebase";
+import { getToken } from "firebase/messaging";
 
-function App() {
+export default function App() {
+  async function requestPermission() {
+    const permission = await Notification.requestPermission();
+    if (permission === "granted") {
+      const token = await getToken(messaging, {
+        vapidKey: "", //vapidKey should be generated from Firebase Console (project settings > Cloud Messaging > Web Push Certificates > Generate Key)
+      });
+      console.log("Token Generated", token);
+    } else if (permission === "denied") {
+      alert("Permission has been Deined");
+    }
+  }
+  useEffect(() => {
+    requestPermission();
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Firebase FCM Token Generator</h1>
     </div>
   );
 }
-
-export default App;
